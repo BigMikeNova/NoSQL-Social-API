@@ -1,8 +1,9 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+const routes = require('./routes');
 
-const MONGODB_URI = 'mongodb://localhost/social_network_db'; // Replace with your MongoDB connection URI
+const MONGODB_URI = 'mongodb://localhost/dreamsDB'; // Replace with your MongoDB connection URI
 
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
@@ -20,10 +21,7 @@ db.once('open', () => {
 app.use(express.json());
 
 // Routes setup
-const userRoutes = require('./routes/userRoutes');
-const thoughtRoutes = require('./routes/thoughtRoutes');
-app.use('/api', userRoutes);
-app.use('/api', thoughtRoutes);
+app.use('/api', routes);
 
 // Start the server
 const PORT = process.env.PORT || 3000;
