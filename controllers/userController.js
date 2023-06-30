@@ -1,70 +1,118 @@
+// controllers/userController.js
+
 const User = require('../models/User');
 
-
-const getUser = async (req, res) => {
+// GET all users
+const getAllUsers = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    const friendCount = user.friendCount; // Access the friendCount virtual property
-    res.json({ user, friendCount });
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    console.error('Error retrieving users:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// GET a single user by its _id and populated thought and friend data
+const getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId)
+      .populate('thoughts')
+      .populate('friends');
+    res.json(user);
   } catch (error) {
     console.error('Error retrieving user:', error);
     res.status(500).json({ error: 'Server error' });
   }
 };
 
-// Get all users
-const getAllUsers = async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch users' });
-  }
-};
-
-// Create a new user
+// POST a new user
 const createUser = async (req, res) => {
   try {
-    const newUser = await User.create(req.body);
-    res.status(201).json(newUser);
+    const { username, email } = req.body;
+    const user = await User.create({ username, email });
+    res.json(user);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to create user' });
+    console.error('Error creating user:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-// Update a user
-const updateUser = async (req, res) => {
+// PUT to update a user by its _id
+const updateUserById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
-    if (updatedUser) {
-      res.json(updatedUser);
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
+    const { username, email } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      { username, email },
+      { new: true }
+    );
+    res.json(updatedUser);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to update user' });
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
-// Delete a user
-const deleteUser = async (req, res) => {
+// DELETE to remove user by its _id
+const deleteUserById = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deletedUser = await User.findByIdAndDelete(id);
-    if (deletedUser) {
-      res.json(deletedUser);
-    } else {
-      res.status(404).json({ error: 'User not found' });
-    }
+    const deletedUser = await User.findByIdAndDelete(req.params.userId);
+
+    // Remove the user's associated thoughts
+    await Thought.deleteMany({ username: deletedUser.username });
+
+    res.json(deletedUser);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to delete user' });
+    console.error('Error deleting user:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// POST to add a new friend to a user's friend list
+const addFriend = async (req, res) => {
+  try {
+    const { userId, friendId } = req.params;
+
+    // Update the user's friend list by pushing the new friend's _id
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $push: { friends: friendId } },
+      { new: true }
+    );
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('Error adding friend:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// DELETE to remove a friend from a user's friend list
+const removeFriend = async (req, res) => {
+  try {
+    const { userId, friendId } = req.params;
+
+    // Update the user's friend list by pulling the friend's _id
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { friends: friendId } },
+      { new: true }
+    );
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('Error removing friend:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 };
 
 module.exports = {
   getAllUsers,
+  getUserById,
   createUser,
-  updateUser,
-  deleteUser,
+  updateUserById,
+  deleteUserById,
+  addFriend,
+  removeFriend,
 };

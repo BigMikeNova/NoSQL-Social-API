@@ -1,68 +1,27 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../../models/User');
+const userController = require('../controllers/userController');
 
+// GET all users
+router.get('/users', userController.getAllUsers);
 
-// GET route to retrieve all users
-router.get('/users', async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
-  }
-});
+// GET a single user by its _id and populated thought and friend data
+router.get('/users/:userId', userController.getUserById);
 
-// GET route to retrieve a single user by ID
-router.get('/users/:userId', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.userId);
-    const friendCount = user.friendCount; // Access the friendCount virtual property
-    res.json({ user, friendCount });
-  } catch (error) {
-    console.error('Error retrieving user:', error);
-    res.status(500).json({ error: 'Server error' });
-  }
-});
-// POST route to create a new user
-router.post('/users', async (req, res) => {
-    try {
-      const newUser = await User.create(req.body);
-      res.status(201).json(newUser);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server Error' });
-    }
-  });
-  
-  // PUT route to update a user by ID
-  router.put('/users/:id', async (req, res) => {
-    try {
-      const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
-      if (!updatedUser) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      res.json(updatedUser);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server Error' });
-    }
-  });
-  
-  // DELETE route to delete a user by ID
-  router.delete('/users/:id', async (req, res) => {
-    try {
-      const deletedUser = await User.findByIdAndDelete(req.params.id);
-      if (!deletedUser) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-      res.json({ message: 'User deleted successfully' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server Error' });
-    }
-  });
+// POST a new user
+router.post('/users', userController.createUser);
+
+// PUT to update a user by its _id
+router.put('/users/:userId', userController.updateUserById);
+
+// DELETE to remove user by its _id
+router.delete('/users/:userId', userController.deleteUserById);
+
+// POST to add a new friend to a user's friend list
+router.post('/users/:userId/friends/:friendId', userController.addFriend);
+
+// DELETE to remove a friend from a user's friend list
+router.delete('/users/:userId/friends/:friendId', userController.removeFriend);
 
 
 module.exports = router;
