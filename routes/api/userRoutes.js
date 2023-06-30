@@ -15,16 +15,14 @@ router.get('/users', async (req, res) => {
 });
 
 // GET route to retrieve a single user by ID
-router.get('/users/:id', async (req, res) => {
+router.get('/users/:userId', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    res.json(user);
+    const user = await User.findById(req.params.userId);
+    const friendCount = user.friendCount; // Access the friendCount virtual property
+    res.json({ user, friendCount });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Server Error' });
+    console.error('Error retrieving user:', error);
+    res.status(500).json({ error: 'Server error' });
   }
 });
 // POST route to create a new user

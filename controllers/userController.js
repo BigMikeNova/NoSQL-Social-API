@@ -1,5 +1,17 @@
 const User = require('../models/User');
 
+
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.userId);
+    const friendCount = user.friendCount; // Access the friendCount virtual property
+    res.json({ user, friendCount });
+  } catch (error) {
+    console.error('Error retrieving user:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 // Get all users
 const getAllUsers = async (req, res) => {
   try {

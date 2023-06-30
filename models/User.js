@@ -13,10 +13,12 @@ const userSchema = new mongoose.Schema({
   },
   firstName: String,
   lastName: String,
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
+});
+
+// Define a virtual property 'friendCount'
+userSchema.virtual('friendCount').get(function() {
+  return this.friends.length;
 });
 
 const User = mongoose.model('User', userSchema);
