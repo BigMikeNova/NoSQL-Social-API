@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -25,17 +26,12 @@ const userSchema = new mongoose.Schema({
         ref: 'User',
       },
     ],
-    userID: {
-      type: String, // Modify the field type according to your needs
-      required: true,
-      unique: true,
-    },
   },
   {
     toJSON: {
       virtuals: true,
     },
-    id: false,
+    id: true,
   }
 );
 

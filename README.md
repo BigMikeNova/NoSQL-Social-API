@@ -2,6 +2,30 @@
 
 Welcome to the Social Network API, a backend application that provides an API for a social network web application. Users can share their thoughts, react to friends' thoughts, and manage their friend list. This API is built using Express.js for routing, MongoDB for the database, and Mongoose as the ODM.
 
+## Table of Contents
+- [Walkthrough Video](#walkthrough-video)
+- [GitHub Repository](#github-repository)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Usage](#usage)
+- [Contribution](#contribution)
+- [License](#license)
+
+## Walkthrough Video
+
+To see the functionality of the Social Network API, please watch the walkthrough video.
+
+[Link to Walkthrough Video](https://www.loom.com/share/ac27eeea31a44137a2821bf2a03fb977?sid=7ad7bbd4-bc90-4102-bf18-284d3a42bc11)
+
+## GitHub Repository
+
+To view the GitHub repository for this project, please visit the link below.
+
+[Link to GitHub Repository](https://github.com/BigMikeNova/NoSQL-Social-API)
+
 ## Features
 
 - User management: Create, retrieve, update, and delete users.
@@ -68,13 +92,6 @@ Welcome to the Social Network API, a backend application that provides an API fo
        - `DELETE /api/thoughts/:thoughtId` - Delete a thought by ID
        - `POST /api/thoughts/:thoughtId/reactions` - Add a reaction to a thought
        - `DELETE /api/thoughts/:thoughtId/reactions/:reactionId` - Remove a reaction from a thought
-
-
-## Walkthrough Video
-
-To see the functionality of the Social Network API, please watch the walkthrough video.
-
-[Link to Walkthrough Video](link-to-video)
 
 ## Contribution
 
